@@ -1,0 +1,6 @@
+{
+  "name": "diamond",
+  "NODES": ["A", "B", "C", "D"],
+  "EDGES": [["A", "B"], ["A", "C"], ["B", "D"], ["C", "D"]],
+  "COLORS": ["Red", "Green", "Blue"]
+}

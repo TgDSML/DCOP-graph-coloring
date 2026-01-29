@@ -1,0 +1,6 @@
+{
+  "name": "triangle",
+  "NODES": ["A", "B", "C"],
+  "EDGES": [["A", "B"], ["A", "C"], ["B", "C"]],
+  "COLORS": ["Red", "Green", "Blue"]
+}
