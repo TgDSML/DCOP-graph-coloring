@@ -66,6 +66,12 @@ def main():
     plot_seed = args.plot_seed
     if 0 <= plot_seed < args.seeds:
         hist = results[plot_seed]["history_best"]
+        
+        print(f"\nAssignment (seed={plot_seed}):")
+        assignment = results[plot_seed]["assignment"]
+        for node in sorted(assignment.keys()):
+            print(f"  {node}: {assignment[node]}")
+
         plt.figure()
         plt.plot(list(range(len(hist))), hist)
         plt.xlabel("Iteration")
