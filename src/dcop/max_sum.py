@@ -43,6 +43,7 @@ def max_sum(instance, max_iters=50, damping=0.5, tol=1e-6):
     nodes = instance.nodes
     colors = instance.colors
     k = len(colors)
+    history_conflicts = []
 
     neighbors = build_neighbors(nodes, instance.edges)
 
@@ -93,6 +94,24 @@ def max_sum(instance, max_iters=50, damping=0.5, tol=1e-6):
 
         messages = new_messages
 
+        # Compute temporary assignment to track convergence
+        temp_assignment = {}
+        for i in nodes:
+            belief = [0.0] * k
+            for neighbor in neighbors[i]:
+                factor_to_i = factor_message(neighbor, i)
+                belief = [a + b for a, b in zip(belief, factor_to_i)]
+                best_color = min(range(k), key=lambda c: belief[c])
+                temp_assignment[i] = best_color
+
+        temp_conflicts = 0
+        for u, v in instance.edges:
+            if temp_assignment[u] == temp_assignment[v]:
+                temp_conflicts += 1
+
+        history_conflicts.append(temp_conflicts)
+
+
         if max_delta < tol:
             break
 
@@ -117,5 +136,6 @@ def max_sum(instance, max_iters=50, damping=0.5, tol=1e-6):
     return {
         "assignment": assignment,
         "conflicts": conflicts,
-        "iterations": iteration + 1
+        "iterations": iteration + 1,
+        "history_conflicts": history_conflicts
     }

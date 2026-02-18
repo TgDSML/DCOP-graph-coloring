@@ -2,6 +2,7 @@ import argparse
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+import matplotlib.pyplot as plt 
 
 from src.dcop.max_sum import load_instance, max_sum
 
@@ -24,6 +25,14 @@ def main():
         print(f"  {node}: {color}")
     print("Conflicts:", result["conflicts"])
 
+    hist = result.get("history_conflicts")
+    if hist:
+        plt.figure()
+        plt.plot(range(len(hist)), hist)
+        plt.xlabel("Iteration")
+        plt.ylabel("Conflicts")
+        plt.title("Max-Sum convergence")
+        plt.show()
 
 if __name__ == "__main__":
     main()
