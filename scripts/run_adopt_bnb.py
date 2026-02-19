@@ -1,9 +1,16 @@
 import os
+import json
 import matplotlib.pyplot as plt
 import networkx as nx
 
-# Import από το αρχείο adopt
-from src.dcop.adopt import load_instance, run_adopt
+# Εισάγουμε μόνο τη Λογική από το άλλο αρχείο
+from src.dcop.adopt_bnb import solve_adopt_bnb, GraphColoringInstance
+
+def load_instance(file_path):
+    with open(file_path, 'r') as f:
+        data = json.load(f)
+    edges = [tuple(e) for e in data['EDGES']]
+    return GraphColoringInstance(data.get('name','Inst'), data['NODES'], edges, data['COLORS'])
 
 def visualize_solution(instance, assignment, title):
     G = nx.Graph()
@@ -29,11 +36,11 @@ def visualize_solution(instance, assignment, title):
     plt.title(title)
     plt.axis('off')
     
-    print("   🖼️  Displaying graph... (Close the window to continue to the next experiment)")
+    print("   🖼️  Displaying graph... (Close the window to continue to the next one)")
     # ΑΝΤΙ ΓΙΑ SAVEFIG, ΚΑΝΟΥΜΕ SHOW
     plt.show()
 
-def run_all_experiments():
+def main():
     graph_files = [
         "examples/graphs/triangle.json",
         "examples/graphs/diamond.json",
@@ -42,7 +49,7 @@ def run_all_experiments():
     ]
 
     print("========================================")
-    print("      DCOP ADOPT EXPERIMENTS           ")
+    print("      DCOP ADOPT-BnB EXPERIMENTS       ")
     print("========================================\n")
 
     for file_path in graph_files:
@@ -51,36 +58,34 @@ def run_all_experiments():
             print("----------------------------------------\n")
             continue
 
-        # Φόρτωση
         instance = load_instance(file_path)
-        
-        print(f"🧪 Experiment: {instance.name}")
+        print(f"🧪 Experiment: {instance.name} (BnB)")
         print(f"   File: {file_path}")
         print(f"   Nodes: {len(instance.nodes)}, Colors: {len(instance.colors)}")
         
-        # Εκτέλεση
-        limit = 10000 
-        result = run_adopt(instance, max_iters=limit)
+        # Κλήση της καθαρής συνάρτησης επίλυσης
+        limit = 2000
+        result = solve_adopt_bnb(instance, max_iters=limit)
         
-        # Εκτύπωση Αποτελεσμάτων
         print(f"   ✅ Finished in {result['iterations']} iterations.")
         
         if result['conflicts'] == 0:
-            print("   🎉 STATUS: SUCCESS (0 Conflicts)")
+            print(f"   🎉 STATUS: SUCCESS (0 Conflicts)")
         else:
             print(f"   ⚠️ STATUS: FAILED ({result['conflicts']} Conflicts)")
             
-        # Απόκρυψη μεγάλων λιστών
+        # Απόκρυψη μεγάλων λιστών για να μην γεμίζει η κονσόλα
         if len(instance.nodes) <= 10:
             sorted_assignment = dict(sorted(result['assignment'].items()))
             print(f"   Assignment: {sorted_assignment}")
         else:
             print(f"   Assignment: (Hidden for brevity - {len(instance.nodes)} nodes)")
-        
-        # Οπτικοποίηση 
-        visualize_solution(instance, result['assignment'], f"ADOPT: {instance.name} ({result['conflicts']} Conflicts)")
-        
+
+        # Κλήση της οπτικοποίησης (με 3 ορίσματα πλέον!)
+        visualize_solution(instance, result['assignment'], 
+                         f"BnB: {instance.name} ({result['conflicts']} Conflicts)")
+                         
         print("----------------------------------------\n")
 
 if __name__ == "__main__":
-    run_all_experiments()
+    main()
