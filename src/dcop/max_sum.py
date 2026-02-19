@@ -1,6 +1,8 @@
 import json
 import random
 random.seed(0)
+import matplotlib.pyplot as plt
+import networkx as nx
 
 class GraphColoringInstance:
     def __init__(self, name, nodes, edges, colors):
@@ -8,6 +10,31 @@ class GraphColoringInstance:
         self.nodes = nodes
         self.edges = edges
         self.colors = colors
+
+def visualize_solution(instance, assignment, title):
+    G = nx.Graph()
+    G.add_nodes_from(instance.nodes)
+    G.add_edges_from(instance.edges)
+
+    unique_colors = sorted(set(assignment.values()))
+    palette = ['#ff6666', '#66ff66', '#6666ff', '#ffff66', '#ff66ff', '#66ffff']
+    color_map = {c: palette[i % len(palette)] for i, c in enumerate(unique_colors)}
+    node_colors = [color_map[assignment[n]] for n in G.nodes()]
+
+    plt.figure(figsize=(10, 8))
+
+    if "grid" in instance.name.lower():
+        pos = nx.spectral_layout(G)
+    else:
+        pos = nx.spring_layout(G, seed=42)
+
+    nx.draw_networkx_nodes(G, pos, node_color=node_colors, node_size=500, edgecolors='black')
+    nx.draw_networkx_edges(G, pos, alpha=0.5)
+    nx.draw_networkx_labels(G, pos, font_size=10, font_weight='bold')
+
+    plt.title(title)
+    plt.axis('off')
+    plt.show()
 
 def load_instance(file_path):
     with open(file_path, 'r') as f:
@@ -132,6 +159,13 @@ def max_sum(instance, max_iters=50, damping=0.5, tol=1e-6):
     for u, v in instance.edges:
         if assignment_index[u] == assignment_index[v]:
             conflicts += 1
+
+    visualize_solution(
+    instance,
+    assignment,
+    f"Max-Sum | {instance.name} | conflicts={conflicts}"
+    )
+
 
     return {
         "assignment": assignment,
