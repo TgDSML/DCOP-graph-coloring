@@ -30,7 +30,7 @@ def visualize_solution(instance, assignment, title):
     plt.title(title)
     plt.axis('off')
     
-    print("   🖼️  Displaying graph... (Close the window to continue to the next experiment)")
+    print("     Displaying graph... (Close the window to continue to the next experiment)")
     # ΑΝΤΙ ΓΙΑ SAVEFIG, ΚΑΝΟΥΜΕ SHOW
     plt.show()
 
@@ -48,14 +48,14 @@ def run_all_experiments():
 
     for file_path in graph_files:
         if not os.path.exists(file_path):
-            print(f"❌ Error: File NOT found: {file_path}")
+            print(f" Error: File NOT found: {file_path}")
             print("----------------------------------------\n")
             continue
 
         # Φόρτωση
         instance = load_instance(file_path)
         
-        print(f"🧪 Experiment: {instance.name}")
+        print(f" Experiment: {instance.name}")
         print(f"   File: {file_path}")
         print(f"   Nodes: {len(instance.nodes)}, Colors: {len(instance.colors)}")
         
@@ -64,12 +64,12 @@ def run_all_experiments():
         result = run_adopt(instance, max_iters=limit)
         
         # Εκτύπωση Αποτελεσμάτων
-        print(f"   ✅ Finished in {result['iterations']} iterations.")
+        print(f"    Finished in {result['iterations']} iterations.")
         
         if result['conflicts'] == 0:
-            print("   🎉 STATUS: SUCCESS (0 Conflicts)")
+            print("    STATUS: SUCCESS (0 Conflicts)")
         else:
-            print(f"   ⚠️ STATUS: FAILED ({result['conflicts']} Conflicts)")
+            print(f"    STATUS: FAILED ({result['conflicts']} Conflicts)")
             
         # Απόκρυψη μεγάλων λιστών
         if len(instance.nodes) <= 10:

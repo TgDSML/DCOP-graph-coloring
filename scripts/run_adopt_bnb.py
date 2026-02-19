@@ -37,7 +37,7 @@ def visualize_solution(instance, assignment, title):
     plt.title(title)
     plt.axis('off')
     
-    print("   🖼️  Displaying graph... (Close the window to continue to the next one)")
+    print("     Displaying graph... (Close the window to continue to the next one)")
     # ΑΝΤΙ ΓΙΑ SAVEFIG, ΚΑΝΟΥΜΕ SHOW
     plt.show()
 
@@ -55,12 +55,12 @@ def main():
 
     for file_path in graph_files:
         if not os.path.exists(file_path):
-            print(f"❌ Error: File NOT found: {file_path}")
+            print(f" Error: File NOT found: {file_path}")
             print("----------------------------------------\n")
             continue
 
         instance = load_instance(file_path)
-        print(f"🧪 Experiment: {instance.name} (BnB)")
+        print(f" Experiment: {instance.name} (BnB)")
         print(f"   File: {file_path}")
         print(f"   Nodes: {len(instance.nodes)}, Colors: {len(instance.colors)}")
         
@@ -68,12 +68,12 @@ def main():
         limit = 2000
         result = solve_adopt_bnb(instance, max_iters=limit)
         
-        print(f"   ✅ Finished in {result['iterations']} iterations.")
+        print(f"    Finished in {result['iterations']} iterations.")
         
         if result['conflicts'] == 0:
-            print(f"   🎉 STATUS: SUCCESS (0 Conflicts)")
+            print(f"    STATUS: SUCCESS (0 Conflicts)")
         else:
-            print(f"   ⚠️ STATUS: FAILED ({result['conflicts']} Conflicts)")
+            print(f"    STATUS: FAILED ({result['conflicts']} Conflicts)")
             
         # Απόκρυψη μεγάλων λιστών για να μην γεμίζει η κονσόλα
         if len(instance.nodes) <= 10:
