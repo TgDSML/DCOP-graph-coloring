@@ -1,12 +1,14 @@
 import argparse
-import os 
+import os
 import sys
 import matplotlib.pyplot as plt
-import  statistics
+import statistics
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from src.dcop.max_sum import load_instance
-from src.dcop.gibbs import dcop_gibbs
+from src.dcop.gibbs import dcop_gibbs, visualize_solution
+
 
 def main():
     p = argparse.ArgumentParser()
@@ -62,16 +64,24 @@ def main():
     print("  min :", min(best_conflicts_all))
     print("  max :", max(best_conflicts_all))
 
-    # Plot best-so-far conflicts for one chosen seed
+    # Plot + visualize ONLY for one chosen seed
     plot_seed = args.plot_seed
     if 0 <= plot_seed < args.seeds:
         hist = results[plot_seed]["history_best"]
-        
+
         print(f"\nAssignment (seed={plot_seed}):")
         assignment = results[plot_seed]["assignment"]
         for node in sorted(assignment.keys()):
             print(f"  {node}: {assignment[node]}")
 
+        
+        visualize_solution(
+            inst,
+            assignment,
+            f"Gibbs | {inst.name} | seed={plot_seed} | conflicts={results[plot_seed]['conflicts']}"
+        )
+
+        
         plt.figure()
         plt.plot(list(range(len(hist))), hist)
         plt.xlabel("Iteration")
@@ -80,6 +90,7 @@ def main():
         plt.show()
     else:
         print(f"plot_seed must be in [0, {args.seeds-1}].")
+
 
 if __name__ == "__main__":
     main()

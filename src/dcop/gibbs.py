@@ -1,6 +1,35 @@
 import random
 import math
+import networkx as nx
+import matplotlib.pyplot as plt
 from src.dcop.max_sum import build_neighbors, load_instance
+
+
+def visualize_solution(instance, assignment, title):
+    G = nx.Graph()
+    G.add_nodes_from(instance.nodes)
+    G.add_edges_from(instance.edges)
+
+    unique_colors = sorted(set(assignment.values()))
+    palette = ['#ff6666', '#66ff66', '#6666ff', '#ffff66', '#ff66ff', '#66ffff']
+    color_map = {c: palette[i % len(palette)] for i, c in enumerate(unique_colors)}
+    node_colors = [color_map[assignment[n]] for n in G.nodes()]
+
+    plt.figure(figsize=(10, 8))
+
+    if "grid" in instance.name.lower():
+        pos = nx.spectral_layout(G)
+    else:
+        pos = nx.spring_layout(G, seed=42)
+
+    nx.draw_networkx_nodes(G, pos, node_color=node_colors, node_size=500, edgecolors='black')
+    nx.draw_networkx_edges(G, pos, alpha=0.5)
+    nx.draw_networkx_labels(G, pos, font_size=10, font_weight='bold')
+
+    plt.title(title)
+    plt.axis('off')
+    plt.show()
+
 
 def compute_conflicts(edges, assignment_index):
     conflicts = 0
@@ -8,6 +37,7 @@ def compute_conflicts(edges, assignment_index):
         if assignment_index[u] == assignment_index[v]:
             conflicts += 1
     return conflicts
+
 
 def local_cost(node, color_idx, neighbors, assignment_index):
     cost = 0
@@ -23,9 +53,10 @@ def sample_from_probs(probs):
     for i, p in enumerate(probs):
         s += p
         if r <= s:
-            return i 
+            return i
     return len(probs) - 1
-    
+
+
 def dcop_gibbs(instance, max_iters=50, beta=2, seed=10, schedule="random"):
     random.seed(seed)
 
@@ -63,13 +94,13 @@ def dcop_gibbs(instance, max_iters=50, beta=2, seed=10, schedule="random"):
             best_assignment_index = dict(assignment_index)
 
         history_best.append(best_conflicts)
-        
+
         if best_conflicts == 0 and iters_to_zero is None:
             iters_to_zero = t + 1
             break
 
     assignment = {n: colors[best_assignment_index[n]] for n in nodes}
-    
+
     return {
         "assignment": assignment,
         "conflicts": best_conflicts,
@@ -78,8 +109,9 @@ def dcop_gibbs(instance, max_iters=50, beta=2, seed=10, schedule="random"):
         "schedule": schedule,
         "seed": seed,
         "iters_to_zero": iters_to_zero,
-        "history_best": history_best
-        }
+        "history_best": history_best,
+    }
+
 
 
 
