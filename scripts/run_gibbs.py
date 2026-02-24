@@ -10,6 +10,28 @@ from src.dcop.max_sum import load_instance
 from src.dcop.gibbs import dcop_gibbs, visualize_solution
 
 
+
+import matplotlib.pyplot as plt
+
+plt.rcParams.update({
+    "figure.figsize": (10, 6),
+    "figure.dpi": 120,
+    "savefig.dpi": 200,
+
+    "font.size": 11,
+    "axes.titlesize": 14,
+    "axes.titleweight": "bold",
+    "axes.labelsize": 12,
+    "axes.labelweight": "bold",
+
+    "legend.fontsize": 11,
+    "lines.linewidth": 2.5,
+
+    "axes.grid": True,
+    "grid.linestyle": "--",
+    "grid.alpha": 0.6,
+})
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--instance", required=True)
@@ -83,13 +105,26 @@ def main():
 
         
         plt.figure()
-        plt.plot(list(range(len(hist))), hist)
-        plt.xlabel("Iteration")
-        plt.ylabel("Best-so-far conflicts")
-        plt.title(f"DCOP-Gibbs convergence (seed={plot_seed}, beta={args.beta})")
-        plt.show()
-    else:
-        print(f"plot_seed must be in [0, {args.seeds-1}].")
+
+        iters = list(range(len(hist)))
+
+        plt.plot(iters, hist,
+                label="DCOP-Gibbs (Best-so-far)",
+                alpha=0.9)
+
+        plt.scatter([iters[-1]], [hist[-1]], s=50, zorder=5)
+
+        plt.title(f"Σύγκλιση (Convergence): {inst.name} | DCOP-Gibbs")
+        plt.xlabel("Αριθμός Επαναλήψεων (Iterations)")
+        plt.ylabel("Αριθμός Συγκρούσεων")
+
+        plt.legend(loc="upper right")
+        plt.xlim(0, max(iters[-1], 1))
+        plt.ylim(-1, max(hist[0], 1) + 1)
+
+        plt.tight_layout()
+        plt.show()    
+    
 
 
 if __name__ == "__main__":
